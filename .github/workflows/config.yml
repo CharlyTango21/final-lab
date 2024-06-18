@@ -5,4 +5,8 @@ on:
       - feature/lab_final
 
 jobs:
-  echo: "Primera prueba"
+  runs-on : ubunto-latest
+  step:
+    - name: Mensaje
+    run: |
+      echo "Primera prueba"

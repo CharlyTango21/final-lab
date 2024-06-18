@@ -6,7 +6,7 @@ on:
 
 jobs:
   runs-on : ubunto-latest
-  step:
+  steps:
     - name: Mensaje
     run: |
       echo "Primera prueba"

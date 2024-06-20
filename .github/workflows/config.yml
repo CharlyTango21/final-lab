@@ -14,8 +14,11 @@ jobs:
           sparse-checkout: .
 
       - name: Install Dependencies
-        run: npm install  
+        run: npm install 
+        
+      - name: Build
+        run: npm run build
 
       - name: Mensaje avance
-        run: echo "Instalación de dependencias V2"
+        run: echo "Construcción de la imagen"
 

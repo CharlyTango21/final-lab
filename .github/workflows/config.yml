@@ -1,0 +1,15 @@
+name: React - Laboratorio Final
+on:
+  push:
+    branches:
+      - feature/lab_final_devsecops
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Mensaje avance
+        run: echo "Creación del pipeline"
+

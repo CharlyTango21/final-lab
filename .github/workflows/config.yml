@@ -16,7 +16,8 @@ jobs:
       - name: Install Dependencies
         run: npm install   
 
-      # - name: Build
-      #   run: npm run build
+      - name: Build
+        run: npm run build
+      
       - name: Mensaje de finalización
-        run: echo "Termino bien hasta hoy"
+        run: echo "Termino bien hasta ahora"

@@ -6,12 +6,12 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:    
-
-    - name: Install dependencies
-      run: npm install
-    
-    - name: Build
-      run: |
-        npm run build
+      - name: Install Dependencies
+        run: npm install    
+      # - name: Build
+      #   run: npm run build
+      - name: Mensaje de finalización
+        run: echo "Termino bien hasta hoy"

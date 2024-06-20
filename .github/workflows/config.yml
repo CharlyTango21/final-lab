@@ -1,4 +1,4 @@
-name: Workflow
+name: React - Laboratorio Final
 on:
   push:
     branches:
@@ -7,8 +7,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
+    steps:    
+    - name: Checkout Code
+      run: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install
     
-    - name: Mensaje
+    - name: Build
       run: |
-        echo "Primera prueba"
+        npm run build

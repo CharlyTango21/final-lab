@@ -2,7 +2,7 @@ name: React - Laboratorio Final
 on:
   push:
     branches:
-      - feature/lab_final_devsecops
+      - feat/lab_final_devsecops
 
 jobs:
   build:

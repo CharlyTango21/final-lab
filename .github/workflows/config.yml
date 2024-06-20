@@ -9,10 +9,13 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .
 
       - name: Install Dependencies
         run: npm install  
 
       - name: Mensaje avance
-        run: echo "Instalación de dependencias"
+        run: echo "Instalación de dependencias V2"
 

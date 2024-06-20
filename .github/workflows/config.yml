@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - name: Install Dependencies
+        run: npm install  
+
       - name: Mensaje avance
-        run: echo "Creación del pipeline"
+        run: echo "Instalación de dependencias"
 

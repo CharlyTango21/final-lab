@@ -8,8 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      # - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         # with:
         #   sparse-checkout: .
       - name: Use Node.js 16.x
@@ -43,6 +42,8 @@ jobs:
             -Dsonar.projectKey=labfinal-devsecops
             -Dsonar.organization=LabFinal_DevSecOps
             -Dsonar.host.url=https://sonarcloud.io
+          working-directory: ${{ github.workspace }}
+          timeout: 30m
 
       - name: Build
         run: npm run build

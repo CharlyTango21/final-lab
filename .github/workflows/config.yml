@@ -34,9 +34,15 @@ jobs:
           fi
         
       - name: SonarCloud Scan #SAST
-        uses: sonarcloud/sonarcloud-github-action@v1
+        uses: sonarcloud/sonarcloud-github-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          LAB_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+        with:
+          args: >
+            -Dsonar.projectKey=labfinal-devsecops
+            -Dsonar.organization=LabFinal_DevSecOps
+            -Dsonar.host.url=https://sonarcloud.io
 
       - name: Build
         run: npm run build

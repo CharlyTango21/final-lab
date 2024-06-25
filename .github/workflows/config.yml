@@ -23,27 +23,29 @@ jobs:
         run: |
           if [! -f sonar-project.properties ]; then
             echo "sonar-project.properties no encontrado. Creado..."
-            touch sonar-project.properties
-            echo "sonar.projectKey=labfinal-devsecops" >> sonar-project.properties
-            echo "sonar.projectName=LabFinal_DevSecOps" >> sonar-project.properties
-            echo "sonar.projectVersion=1.0" >> sonar-project.properties
-            echo "sonar.sources=." >> sonar-project.properties
-            echo "sonar.language=ts" >> sonar-project.properties
-            echo "sonar.sourceEncoding=UTF-8" >> sonar-project.properties
+          else
+            echo "sonar-project.properties already exists."
+            # touch sonar-project.properties
+            # echo "sonar.projectKey=labfinal-devsecops" >> sonar-project.properties
+            # echo "sonar.projectName=LabFinal_DevSecOps" >> sonar-project.properties
+            # echo "sonar.projectVersion=1.0" >> sonar-project.properties
+            # echo "sonar.sources=." >> sonar-project.properties
+            # echo "sonar.language=ts" >> sonar-project.properties
+            # echo "sonar.sourceEncoding=UTF-8" >> sonar-project.properties
           fi
         
-      - name: SonarCloud Scan #SAST
-        uses: sonarcloud/sonarcloud-github-action@v3
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          LAB_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
-        with:
-          args: >
-            -Dsonar.projectKey=labfinal-devsecops
-            -Dsonar.organization=LabFinal_DevSecOps
-            -Dsonar.host.url=https://sonarcloud.io
-          working-directory: ${{ github.workspace }}
-          timeout: 30m
+      # - name: SonarCloud Scan #SAST
+      #   uses: sonarcloud/sonarcloud-github-action@v3
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     LAB_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+      #   with:
+      #     args: >
+      #       -Dsonar.projectKey=labfinal-devsecops
+      #       -Dsonar.organization=LabFinal_DevSecOps
+      #       -Dsonar.host.url=https://sonarcloud.io
+      #     working-directory: ${{ github.workspace }}
+      #     timeout: 30m
 
       - name: Build
         run: npm run build

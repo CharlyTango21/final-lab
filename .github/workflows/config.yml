@@ -21,17 +21,13 @@ jobs:
 
       - name: Validar existecia de SonarCloud
         run: |
-          if [! -f sonar-project.properties ]; then
-            echo "sonar-project.properties no encontrado. Creado..."
+          if [ ! -d ~/.sonar ]; then
+            echo "Dependencias de SonarCloud no encontradas. Instalando..."
+            curl -sSf https://sonarcloud.io/static/cli-latest.sh | sh
+            export SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}
+            export SONAR_HOST_URL=https://sonarcloud.io
           else
-            echo "sonar-project.properties already exists."
-            # touch sonar-project.properties
-            # echo "sonar.projectKey=labfinal-devsecops" >> sonar-project.properties
-            # echo "sonar.projectName=LabFinal_DevSecOps" >> sonar-project.properties
-            # echo "sonar.projectVersion=1.0" >> sonar-project.properties
-            # echo "sonar.sources=." >> sonar-project.properties
-            # echo "sonar.language=ts" >> sonar-project.properties
-            # echo "sonar.sourceEncoding=UTF-8" >> sonar-project.properties
+            echo "Dependencias de SonarCloud encontradas."
           fi
         
       # - name: SonarCloud Scan #SAST

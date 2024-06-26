@@ -31,7 +31,8 @@ jobs:
         run: |
           if [ ! -d ~/.sonar ]; then
             echo "Dependencias de SonarCloud no encontradas. Instalando..."
-            curl -sSf https://sonarcloud.io/static/cli-latest.sh | sh
+            curl -s -X POST -u "$SONAR_TOKEN:" "$SONAR_URL/api/projects/create" -d "name=$REPO&project=${GITHUB_ORG}_$REPO&organization=$SONAR_ORG&visibility=private"
+            #curl -sSf https://sonarcloud.io/static/cli-latest.sh | sh
             if [ $? -ne 0 ]; then
               echo "Error al instalar SonarCloud"
               # bash./.github/workflows/send-email.sh "Error SonarCloud" "Se produjo un error en la instalación de SonarCloud en ${REPO_GITHUB}."

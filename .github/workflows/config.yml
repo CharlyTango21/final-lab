@@ -20,7 +20,7 @@ jobs:
           npm install
           if [ $? -ne 0 ]; then
             echo "Error al construir el proyecto"
-           ./send-email.sh "Error Install Dependencies" "Se produjo un error en la instalación de dependencias en ${REPO_GITHUB}."
+           ./.github/workflows/send-email.sh "Error Install Dependencies" "Se produjo un error en la instalación de dependencias en ${REPO_GITHUB}."
             exit 1
           fi
 
@@ -31,7 +31,7 @@ jobs:
             curl -sSf https://sonarcloud.io/static/cli-latest.sh | sh
             if [ $? -ne 0 ]; then
               echo "Error al instalar SonarCloud"
-             ./send-email.sh "Error SonarCloud" "Se produjo un error en la instalación de SonarCloud en ${REPO_GITHUB}."
+             ./.github/workflows/send-email.sh "Error SonarCloud" "Se produjo un error en la instalación de SonarCloud en ${REPO_GITHUB}."
               exit 1
             fi
           fi

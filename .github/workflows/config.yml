@@ -20,19 +20,25 @@ jobs:
           npm install
             if [ $? -ne 0 ]; then
               echo "Error al construir el proyecto"
+              notify:
+                  - mail:
+                      to: ${EMAIL_TO}
+                      subject: 'Error Install Dependencies'
+                      body: 'Se produjo un error en la instalación de dependencias en ${GITHUB_REPO}.'
               exit 1
             fi
+            
       - name: print de repo
         run: echo "perro pepe de la suerte -> ${GITHUB_REPO}"
       
-      - name: Send Error Email - Install Dependencies
-        if: failure()
-        uses: actions/send-email@v1
-        with:
-          from: "github-actions@${GITHUB_REPO}.com"
-          to: ${{ secrets.EMAIL_RECIPIENT }}
-          subject: "Error en Install Dependencies"
-          body: "Se produjo un error en la instalación de dependencias en ${GITHUB_REPO}."
+      # - name: Send Error Email - Install Dependencies
+      #   if: failure()
+      #   uses: actions/send-email@v1
+      #   with:
+      #     from: "github-actions@${GITHUB_REPO}.com"
+      #     to: ${{ secrets.EMAIL_RECIPIENT }}
+      #     subject: "Error en Install Dependencies"
+      #     body: "Se produjo un error en la instalación de dependencias en ${GITHUB_REPO}."
 
 
       - name: Validar existecia de SonarCloud
@@ -46,14 +52,14 @@ jobs:
             echo "Dependencias de SonarCloud encontradas."
           fi
       
-      - name: Send Error Email - SonarCloud
-        if: failure()
-        uses: actions/send-email@v1
-        with:
-            from: "github-actions@${GITHUB_REPO}.com"
-            to: ${{ secrets.EMAIL_RECIPIENT }}
-            subject: "Error en prueba SAST"
-            body: "Se produjo un error en la verificación de existencia de SonarCloud en ${GITHUB_REPO}."
+      # - name: Send Error Email - SonarCloud
+      #   if: failure()
+      #   uses: actions/send-email@v1
+      #   with:
+      #       from: "github-actions@${GITHUB_REPO}.com"
+      #       to: ${{ secrets.EMAIL_RECIPIENT }}
+      #       subject: "Error en prueba SAST"
+      #       body: "Se produjo un error en la verificación de existencia de SonarCloud en ${GITHUB_REPO}."
         
       # - name: SonarCloud Scan #SAST
       #   uses: sonarcloud/sonarcloud-github-action@v3

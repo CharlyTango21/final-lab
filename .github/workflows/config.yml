@@ -22,11 +22,14 @@ jobs:
             echo "Error al construir el proyecto"
            ./.github/workflows/send-email.sh "Error Install Dependencies" "Se produjo un error en la instalación de dependencias en ${REPO_GITHUB}."
             exit 1
+          else
+            echo "Instalación correcta"
+           ./.github/workflows/send-email.sh "Instalació Correcta" "La instación de dependencias fue ejecutada exitosamente en ${REPO_GITHUB}."
           fi
 
       - name: Validate SonarCloud
         run: |
-          if [! -d ~/.sonar ]; then
+          if [ ! -d ~/.sonar ]; then
             echo "Dependencias de SonarCloud no encontradas. Instalando..."
             curl -sSf https://sonarcloud.io/static/cli-latest.sh | sh
             if [ $? -ne 0 ]; then

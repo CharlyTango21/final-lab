@@ -14,68 +14,33 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16.x'
-      
+
       - name: Install Dependencies
         run: |
           npm install
-            if [ $? -ne 0 ]; then
-              echo "Error al construir el proyecto"
-              notify:
-                  - mail:
-                      to: ${EMAIL_TO}
-                      subject: 'Error Install Dependencies'
-                      body: 'Se produjo un error en la instalación de dependencias en ${GITHUB_REPO}.'
-              exit 1
-            fi
-            
-      - name: print de repo
-        run: echo "perro pepe de la suerte -> ${GITHUB_REPO}"
-      
-      # - name: Send Error Email - Install Dependencies
-      #   if: failure()
-      #   uses: actions/send-email@v1
-      #   with:
-      #     from: "github-actions@${GITHUB_REPO}.com"
-      #     to: ${{ secrets.EMAIL_RECIPIENT }}
-      #     subject: "Error en Install Dependencies"
-      #     body: "Se produjo un error en la instalación de dependencias en ${GITHUB_REPO}."
+          if [ $? -ne 0 ]; then
+            echo "Error al construir el proyecto"
+           ./send-email.sh "Error Install Dependencies" "Se produjo un error en la instalación de dependencias en ${REPO_GITHUB}."
+            exit 1
+          fi
 
-
-      - name: Validar existecia de SonarCloud
+      - name: Validate SonarCloud
         run: |
-          if [ ! -d ~/.sonar ]; then
+          if [! -d ~/.sonar ]; then
             echo "Dependencias de SonarCloud no encontradas. Instalando..."
             curl -sSf https://sonarcloud.io/static/cli-latest.sh | sh
-            export SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}
-            export SONAR_HOST_URL=https://sonarcloud.io
-          else
-            echo "Dependencias de SonarCloud encontradas."
+            if [ $? -ne 0 ]; then
+              echo "Error al instalar SonarCloud"
+             ./send-email.sh "Error SonarCloud" "Se produjo un error en la instalación de SonarCloud en ${REPO_GITHUB}."
+              exit 1
+            fi
           fi
-      
-      # - name: Send Error Email - SonarCloud
-      #   if: failure()
-      #   uses: actions/send-email@v1
-      #   with:
-      #       from: "github-actions@${GITHUB_REPO}.com"
-      #       to: ${{ secrets.EMAIL_RECIPIENT }}
-      #       subject: "Error en prueba SAST"
-      #       body: "Se produjo un error en la verificación de existencia de SonarCloud en ${GITHUB_REPO}."
-        
-      # - name: SonarCloud Scan #SAST
-      #   uses: sonarcloud/sonarcloud-github-action@v3
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     LAB_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
-      #   with:
-      #     args: >
-      #       -Dsonar.projectKey=labfinal-devsecops
-      #       -Dsonar.organization=LabFinal_DevSecOps
-      #       -Dsonar.host.url=https://sonarcloud.io
-      #     working-directory: ${{ github.workspace }}
-      #     timeout: 30m
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
 
       - name: Build
         run: npm run build
-      
+
       - name: Mensaje de finalización
         run: echo "Termino bien hasta ahora"

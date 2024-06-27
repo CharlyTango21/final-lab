@@ -43,17 +43,24 @@ jobs:
 
       - name: Analisis SonarCloud
         run: |
-          npm run sonarqube
-            -Dsonar.projectKey=${{ github.event.repository.name }}
-            -Dsonar.organization=labfinal-devsecops
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.login=${SONAR_TOKEN}
-            -Dsonar.branch.name=feature/lab_final
-            -Dsonar.sources=.
-            -Dsonar.language=js
-            -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.exclusions=**/node_modules/**
-            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx
+          npx sonarqube-scanner \
+              --sonar.host.url=https://sonarcloud.io \
+              --sonar.login=${SONAR_TOKEN} \
+              --sonar.organization=labfinal-devsecops \
+              --sonar.projectKey=${{ github.event.repository.name }} \
+              --sonar.branch.name=feature/lab_final \
+              --sonar.sources=.
+          # npm run sonarqube
+          #   -Dsonar.projectKey=${{ github.event.repository.name }}
+          #   -Dsonar.organization=labfinal-devsecops
+          #   -Dsonar.host.url=https://sonarcloud.io
+          #   -Dsonar.login=${SONAR_TOKEN}
+          #   -Dsonar.branch.name=feature/lab_final
+          #   -Dsonar.sources=.
+          #   -Dsonar.language=js
+          #   -Dsonar.sourceEncoding=UTF-8
+          #   -Dsonar.exclusions=**/node_modules/**
+          #   -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx
 
       - name: Mensaje de finalización
         run: echo "Termino Job "

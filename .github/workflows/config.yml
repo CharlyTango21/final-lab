@@ -36,7 +36,7 @@ jobs:
 
       - name: Analisis SonarClub
         run: |
-          sonarcloud-scan
+          npm run sonarqube
             -Dsonar.projectKey=name=${{ github.event.repository.name }}
             -Dsonar.organization=labfinal-devsecops
             -Dsonar.host.url=https://sonarcloud.io

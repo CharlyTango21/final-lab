@@ -34,12 +34,8 @@ jobs:
             curl -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/project_branches/rename' '-d name=main' -d 'name=${{ github.event.repository.name }}'
           fi
 
-      # - name: Isntalar SonarQube scanner
-      #   run: |
-      #     curl -sSf https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/linux/bin/sonar-scanner-cli-4.6.2.2472.zip -o sonar-scanner-cli.zip
-      #     unzip sonar-scanner-cli.zip
-      #     sudo mv sonar-scanner-cli-4.6.2.2472 /usr/local/sonar-scanner-cli
-      #     sudo update-alternatives --install /usr/bin/sonar-scanner sonar-scanner /usr/local/sonar-scanner-cli/bin/sonar-scanner 1
+      - name: Install sonarqube-scanner
+        run: npm install sonarqube-scanner
 
       - name: Analisis SonarCloud
         run: |

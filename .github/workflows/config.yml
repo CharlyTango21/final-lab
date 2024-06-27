@@ -34,17 +34,17 @@ jobs:
             curl -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/project_branches/rename' '-d name=main' -d 'name=${{ github.event.repository.name }}'
           fi
 
-      - name: Isntalar SonarQube scanner
-        run: |
-          curl -sSf https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/linux/bin/sonar-scanner-cli-4.6.2.2472.zip -o sonar-scanner-cli.zip
-          unzip sonar-scanner-cli.zip
-          sudo mv sonar-scanner-cli-4.6.2.2472 /usr/local/sonar-scanner-cli
-          sudo update-alternatives --install /usr/bin/sonar-scanner sonar-scanner /usr/local/sonar-scanner-cli/bin/sonar-scanner 1
+      # - name: Isntalar SonarQube scanner
+      #   run: |
+      #     curl -sSf https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/linux/bin/sonar-scanner-cli-4.6.2.2472.zip -o sonar-scanner-cli.zip
+      #     unzip sonar-scanner-cli.zip
+      #     sudo mv sonar-scanner-cli-4.6.2.2472 /usr/local/sonar-scanner-cli
+      #     sudo update-alternatives --install /usr/bin/sonar-scanner sonar-scanner /usr/local/sonar-scanner-cli/bin/sonar-scanner 1
 
-      - name: Analisis SonarClub
+      - name: Analisis SonarCloud
         run: |
           npm run sonarqube
-            -Dsonar.projectKey=name=${{ github.event.repository.name }}
+            -Dsonar.projectKey=${{ github.event.repository.name }}
             -Dsonar.organization=labfinal-devsecops
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.login=${SONAR_TOKEN}

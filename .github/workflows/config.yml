@@ -34,6 +34,13 @@ jobs:
             curl -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/project_branches/rename' '-d name=main' -d 'name=${{ github.event.repository.name }}'
           fi
 
+      - name: Isntalar SonarQube scanner
+        run: |
+          curl -sSf https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/linux/bin/sonar-scanner-cli-4.6.2.2472.zip -o sonar-scanner-cli.zip
+          unzip sonar-scanner-cli.zip
+          sudo mv sonar-scanner-cli-4.6.2.2472 /usr/local/sonar-scanner-cli
+          sudo update-alternatives --install /usr/bin/sonar-scanner sonar-scanner /usr/local/sonar-scanner-cli/bin/sonar-scanner 1
+
       - name: Analisis SonarClub
         run: |
           npm run sonarqube
@@ -52,29 +59,3 @@ jobs:
         run: echo "Termino Job "
 
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Configurar Node.js 16.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16.x'
-
-      - name: Obtener Codigo
-        uses: actions/checkout@v4
-
-      - name: Instalar Dependencias
-        run: |
-          npm install
-          if [ $? -ne 0 ]; then
-            echo "Error al instalar dependencias"
-            # bash./.github/workflows/send-email.sh "Error Install Dependencies" "Se produjo un error en la instalación de dependencias en ${REPO_GITHUB}."
-            exit 1
-           else
-             echo "Instalación correcta"
-            #  bash./.github/workflows/send-email.sh "Instalació Correcta" "La instación de dependencias fue ejecutada exitosamente en ${REPO_GITHUB}."
-          fi
-
-      - name: Build
-        run: npm run build

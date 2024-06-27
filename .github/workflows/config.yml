@@ -60,6 +60,15 @@ jobs:
             -Dsonar.exclusions=**/node_modules/** \
             -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
 
+
+      - name: Enviar informe de análisis a SonarCloud
+        uses: sonarcloud/sonarcloud-github-action@v1
+        with:
+          sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
+          project_key: ${{ github.event.repository.name }}
+          organization: labfinal-devsecops
+          branch: feature/lab_final
+          
       - name: Mensaje de finalización
         run: echo "Termino Job "
 

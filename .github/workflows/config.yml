@@ -18,22 +18,6 @@ jobs:
       - name: Obtener Codigo
         uses: actions/checkout@v4
 
-      # - name: Validando existencia de proyecto en SonarCloud
-      #   run: |
-      #     if [ ! -d ~/.sonar ] 
-      #     then
-      #       echo "Dependencias de SonarCloud no encontradas. Instalando..."
-      #       curl -f -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/projects/create' -d 'name=${{ github.event.repository.name }}' -d 'project=${{ github.event.repository.name }}' -d 'organization=labfinal-devsecops' -d 'visibility=public'
-      #       if [ $? -ne 0 ]; then
-      #         echo "Error al instalar SonarCloud"
-      #         # bash./.github/workflows/send-email.sh "Error SonarCloud" "Se produjo un error en la instalación de SonarCloud en ${REPO_GITHUB}."
-      #         exit 1
-      #       fi
-      #     fi
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     #SONAR_HOST_URL: https://sonarcloud.io
-
       - name: Validar existencia del proyecto en SonarCloud
         id: validarProyectoEnSonar
         run: |

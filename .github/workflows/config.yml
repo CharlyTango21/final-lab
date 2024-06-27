@@ -48,7 +48,8 @@ jobs:
           #     -Dsonar.projectKey=${{ github.event.repository.name }} \
           #     -Dsonar.branch.name=feature/lab_final \
           #     -Dsonar.sources=.
-          npm run sonarqube-scanner \
+          sonarcloud_scan
+          # npm run sonarqube-scanner \
             -Dsonar.projectKey=${{ github.event.repository.name }} \
             -Dsonar.organization=labfinal-devsecops \
             -Dsonar.host.url=https://sonarcloud.io \
@@ -61,14 +62,25 @@ jobs:
             -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
 
 
-      - name: Enviar informe de análisis a SonarCloud
-        uses: sonarcloud/sonarcloud-github-action@v1
+      # - name: Enviar informe de análisis a SonarCloud
+      #   uses: sonarcloud/sonarcloud-github-action@v1
+      #   with:
+      #     sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
+      #     project_key: ${{ github.event.repository.name }}
+      #     organization: labfinal-devsecops
+      #     branch: feature/lab_final
+        
+      - name: Notificar por correo electrónico en caso de falla o vulnerabilidades críticas
+        if: failure() || (contains(github.event.pull_request.labels, 'vulnerability:high') || contains(github.event.pull_request.labels, 'vulnerability:critical'))
+        uses: softprops/gmail@v1
         with:
-          sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
-          project_key: ${{ github.event.repository.name }}
-          organization: labfinal-devsecops
-          branch: feature/lab_final
-          
+            from: "karlangastorres9@gmail.com" #${{ secrets.GMAIL_USERNAME }}
+            to: ${{ secrets.EMAIL_TO }}
+            subject: "Análisis de SonarCloud fallido o encontró vulnerabilidades críticas"
+            body: |
+              El análisis de SonarCloud falló o encontró vulnerabilidades críticas en el repositorio ${{ github.event.repository.name }}.
+              Por favor, revise el informe de análisis en SonarCloud para obtener más información.    
+
       - name: Mensaje de finalización
         run: echo "Termino Job "
 

@@ -44,12 +44,12 @@ jobs:
       - name: Analisis SonarCloud
         run: |
           npx sonarqube-scanner \
-              --sonar.host.url=https://sonarcloud.io \
-              --sonar.login=${SONAR_TOKEN} \
-              --sonar.organization=labfinal-devsecops \
-              --sonar.projectKey=${{ github.event.repository.name }} \
-              --sonar.branch.name=feature/lab_final \
-              --sonar.sources=.
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${SONAR_TOKEN} \
+              -Dsonar.organization=labfinal-devsecops \
+              -Dsonar.projectKey=${{ github.event.repository.name }} \
+              -Dsonar.branch.name=feature/lab_final \
+              -Dsonar.sources=.
           # npm run sonarqube
           #   -Dsonar.projectKey=${{ github.event.repository.name }}
           #   -Dsonar.organization=labfinal-devsecops

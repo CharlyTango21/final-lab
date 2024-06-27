@@ -34,6 +34,15 @@ jobs:
             curl -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/project_branches/rename' '-d name=main' -d 'name=${{ github.event.repository.name }}'
           fi
 
+      - name: Analisis SonarClub
+        run: |
+          sonarcloud-scan
+            -Dsonar.projectKey=name=${{ github.event.repository.name }}
+            -Dsonar.organization=labfinal-devsecops
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.login=${SONAR_TOKEN}
+            -Dsonar.branch.name=feature/lab_final
+
       - name: Mensaje de finalización
         run: echo "Termino Job "
 

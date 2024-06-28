@@ -38,28 +38,35 @@ jobs:
         id: InstallSonarScan
         run: npm install sonarqube-scanner
 
-      - name: Analisis SonarCloud
-        if: steps.InstallSonarScan.outcome == 'success' 
-        run: |
-          # npx sonarqube-scanner \
-          #     -Dsonar.host.url=https://sonarcloud.io \
-          #     -Dsonar.login=${SONAR_TOKEN} \
-          #     -Dsonar.organization=labfinal-devsecops \
-          #     -Dsonar.projectKey=${{ github.event.repository.name }} \
-          #     -Dsonar.branch.name=feature/lab_final \
-          #     -Dsonar.sources=.
-          sonarcloud_scan \
-          # npm run sonarqube-scanner \
-            -Dsonar.projectKey=${{ github.event.repository.name }} \
-            -Dsonar.organization=labfinal-devsecops \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${SONAR_TOKEN} \
-            -Dsonar.branch.name=feature/lab_final \
-            -Dsonar.sources=. \
-            -Dsonar.language=js \
-            -Dsonar.sourceEncoding=UTF-8 \
-            -Dsonar.exclusions=**/node_modules/** \
-            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
+      - name: Run SonarCloud scan
+        uses: sonarcloud/sonarcloud-github-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: 'https://sonarcloud.io'
+          GITHUB_TOKEN: ${{ secrets.LAB_GITHUB_TOKEN }}
+
+      # - name: Analisis SonarCloud
+      #   if: steps.InstallSonarScan.outcome == 'success' 
+      #   run: |
+      #     # npx sonarqube-scanner \
+      #     #     -Dsonar.host.url=https://sonarcloud.io \
+      #     #     -Dsonar.login=${SONAR_TOKEN} \
+      #     #     -Dsonar.organization=labfinal-devsecops \
+      #     #     -Dsonar.projectKey=${{ github.event.repository.name }} \
+      #     #     -Dsonar.branch.name=feature/lab_final \
+      #     #     -Dsonar.sources=.
+      #     sonarcloud_scan \
+      #     # npm run sonarqube-scanner \
+      #       -Dsonar.projectKey=${{ github.event.repository.name }} \
+      #       -Dsonar.organization=labfinal-devsecops \
+      #       -Dsonar.host.url=https://sonarcloud.io \
+      #       -Dsonar.login=${SONAR_TOKEN} \
+      #       -Dsonar.branch.name=feature/lab_final \
+      #       -Dsonar.sources=. \
+      #       -Dsonar.language=js \
+      #       -Dsonar.sourceEncoding=UTF-8 \
+      #       -Dsonar.exclusions=**/node_modules/** \
+      #       -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
 
 
       # - name: Enviar informe de análisis a SonarCloud

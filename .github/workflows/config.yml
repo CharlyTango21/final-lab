@@ -48,7 +48,7 @@ jobs:
           #     -Dsonar.projectKey=${{ github.event.repository.name }} \
           #     -Dsonar.branch.name=feature/lab_final \
           #     -Dsonar.sources=.
-          sonarcloud_scan
+          sonarcloud_scan \
           # npm run sonarqube-scanner \
             -Dsonar.projectKey=${{ github.event.repository.name }} \
             -Dsonar.organization=labfinal-devsecops \

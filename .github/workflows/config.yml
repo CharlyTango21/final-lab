@@ -54,7 +54,8 @@ jobs:
             -Dsonar.language=js \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.exclusions=**/node_modules/** \
-            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx 
+            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
+            -Dsonar.qualitygate.wait=true
 
 
       - name: Verificar resultado de SonarCloud

@@ -41,12 +41,14 @@ jobs:
 
       - name: Analisis SonarCloud
         if: steps.InstallSonarScan.outcome == 'success' 
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner \
             -Dsonar.projectKey=${{ github.event.repository.name }} \
             -Dsonar.organization=labfinal-devsecops \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${SONAR_TOKEN} \
+            -Dsonar.login=$SONAR_TOKEN \
             -Dsonar.branch.name=feature/lab_final \
             -Dsonar.sources=. \
             -Dsonar.language=js \

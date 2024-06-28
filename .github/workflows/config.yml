@@ -54,11 +54,15 @@ jobs:
             -Dsonar.language=js \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.exclusions=**/node_modules/** \
-            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
-            -Dsonar.report.export.path=sonar-report.pdf \
-            -Dsonar.report.export.format=PDF
+            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx 
 
 
+      - name: Verificar resultado de SonarCloud
+        run: |
+          if [ $(sonar-scanner -Dsonar.qualitygate.status) != "OK" ]; then
+            echo "SonarCloud encontro vulnerabilidades. Deteniendo workflow."
+            exit 1
+          fi
       # - name: Enviar informe de análisis a SonarCloud
       #   uses: sonarcloud/sonarcloud-github-action@v1
       #   with:

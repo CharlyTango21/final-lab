@@ -68,6 +68,12 @@ jobs:
       - name: Obtener Codigo
         uses: actions/checkout@v4
 
+      - name: Elimnar package-lock.json
+        run: rm package-lock.json
+
+      - name: Regenerar package-lock.json
+        run: npm install
+
       - name: Análisis SCA
         uses: dependency-check/Dependency-Check_Action@1.1.0
         env:

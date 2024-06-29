@@ -74,21 +74,21 @@ jobs:
       - name: Obtener Codigo
         uses: actions/checkout@v4
 
-      - name: Install Dependency Check
+      - name: Download Dependency Check
         run: |
-          curl -sSf https://dl.bintray.com/jeremy-long/dependency-check/dependency-check-latest-release.zip -o dependency-check-latest-release.zip
+          curl -sSf https://github.com/jeremy-long/dependency-check/releases/latest/download/dependency-check-latest-release.zip -o dependency-check-latest-release.zip
+
+      - name: Extract Dependency Check
+        run: |
           unzip dependency-check-latest-release.zip
-          export PATH=$PATH:$PWD/dependency-check/bin
 
       - name: Run Dependency Check
         run: |
-          dependency-check --scanSet --format XML --out dependency-check-report.xml
+          ./dependency-check.sh --scan /github/workspace --format XML --out /github/workspace/report.xml
 
-      - name: Upload report
-        uses: actions/upload-artifact@v2
-        with:
-          name: dependency-check-report
-          path: dependency-check-report.xml
+      - name: Download Dependency Check
+        run: |
+          curl -sSf https://github.com/jeremy-long/dependency-check/releases/latest/download/dependency-check-latest-release.zip -o dependency-check-latest-release.zip
       # - name: Elimnar package-lock.json
       #   run: rm package-lock.json
 

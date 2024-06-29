@@ -71,5 +71,6 @@ jobs:
           curl -sSf https://dependency-check.org/install.sh | sh
 
       - name: Análsis SCA
-        run: |
-          dependency-check --scanSet --format XML --out report.xml .
+        uses: dependency-check/dependency-check-github-action@v1
+        with:
+          args: --scanSet --format XML --out report.xml.

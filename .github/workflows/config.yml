@@ -84,9 +84,11 @@ jobs:
         run: yarn install
 
       - name: Compila el proyecto
+        id: CompilaProject
         run: npm run build
 
       - name: Análisis SCA
+        if: steps.CompilaProject.outcome == 'success'
         uses: dependency-check/Dependency-Check_Action@1.1.0
         env:
           JAVA_HOME: /opt/jdk
@@ -136,4 +138,4 @@ jobs:
 
   #     - name: Build Docker
   #       run: |
-  #         docker build --tag charlytango21/final-lab
+  #         docker build --tag charlytango21/final-lab:latest .

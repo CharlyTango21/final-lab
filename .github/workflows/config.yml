@@ -104,7 +104,8 @@ jobs:
 
   DOCKER_BUILD:
     #needs: CSA
-    runs-on: ubuntu-latest
+    needs: SAST
+    runs-on: self-hosted
     steps:
       - name: Obtener Codigo
         uses: actions/checkout@v4

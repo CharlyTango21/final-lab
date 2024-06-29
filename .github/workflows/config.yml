@@ -80,6 +80,9 @@ jobs:
       - name: Regenerar package-lock.json
         run: npm install
 
+      - name: Regenerar package-lock.json
+        run: yarn install
+
       - name: Compila el proyecto
         run: npm run build
 
@@ -130,3 +133,7 @@ jobs:
   #       with:
   #         name: JAR
   #         path: ${{github.workspace}}
+
+  #     - name: Build Docker
+  #       run: |
+  #         docker build --tag charlytango21/final-lab

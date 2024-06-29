@@ -65,40 +65,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Obtener Codigo
-        uses: actions/checkout@v4
+    - name: Obtener Codigo
+      uses: actions/checkout@v4
 
-      - name: Elimnar package-lock.json
-        run: rm package-lock.json
+    - name: Elimnar package-lock.json
+      run: rm package-lock.json
 
-      - name: Regenerar package-lock.json
-        run: npm install
+    - name: Regenerar package-lock.json
+      run: npm install
 
-      # - name: Análisis SCA
-      #   run: |
-      #     NODE_AUDIT_PACKAGE_MANAGER=npm npx dependency-check --project ${GITHUB_REPO} --scanSet ${GITHUB_WORKSPACE} --format HTML --out report --failOnCVSS 7 --enableRetired
-      #   env:
-      #     GITHUB_REPO: ${{ github.event.repository.name }}
-      #     GITHUB_WORKSPACE: ${{ github.workspace }}
+    - name: Análisis SCA
+      uses: dependency-check/dependency-check_action@1.1.0
+      env:
+        JAVA_HOME: /opt/jdk
+        NODE_AUDIT_PACKAGE_MANAGER: npm
+        NODE_AUDIT_IGNORE_YARN_LOCK: true
+      id: Depcheck
+      with:
+        project: '${{ github.event.repository.name }}'
+        path: '.'
+        format: 'HTML'
+        out: 'report'
+        args: >
+          --failOnCVSS 7
+          --enableRetired
 
-      - name: Análisis SCA
-        uses: dependency-check/dependency-check_action@v6
-        env:
-          JAVA_HOME: /opt/jdk
-          NODE_AUDIT_PACKAGE_MANAGER: npm
-          NODE_AUDIT_IGNORE_YARN_LOCK: true
-        id: Depcheck
-        with:
-          project: '${{ github.event.repository.name }}'
-          path: '.'
-          format: 'HTML'
-          out: 'report'
-          args: >
-            --failOnCVSS 7
-            --enableRetired
-
-      - name: Upload resultado
-        uses: actions/upload-artifact@master
-        with:
-          name: Depcheck report
-          path: ${{github.workspace}}/report
+    - name: Upload resultado
+      uses: actions/upload-artifact@master
+      with:
+        name: Depcheck report
+        path: ${{github.workspace}}/report

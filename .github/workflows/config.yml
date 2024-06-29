@@ -91,8 +91,8 @@ jobs:
       - name: SCA Analisys
         uses: dependency-check/Dependency-Check_Action@1.1.0
         env:
-          JAVA_HOME: /opt/jdk
-          NODE_AUDIT_PACKAGE_MANAGER: npm
+          JAVA_HOME: /usr/lib/jvm/java-17.0.8
+          NODE_AUDIT_PACKAGE_MANAGER: yarn
           #NODE_AUDIT_IGNORE_YARN_LOCK: true
         id: Depcheck
         with:

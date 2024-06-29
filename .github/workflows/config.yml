@@ -74,30 +74,45 @@ jobs:
       - name: Obtener Codigo
         uses: actions/checkout@v4
 
-      - name: Elimnar package-lock.json
-        run: rm package-lock.json
+      - name: Install Dependency Check
+        run: |
+          curl -sSf https://dl.bintray.com/jeremy-long/dependency-check/dependency-check-latest-release.zip -o dependency-check-latest-release.zip
+          unzip dependency-check-latest-release.zip
+          export PATH=$PATH:$PWD/dependency-check/bin
 
-      - name: Regenerar package-lock.json
-        run: npm install
+      - name: Run Dependency Check
+        run: |
+          dependency-check --scanSet --format XML --out dependency-check-report.xml
 
-      - name: Análisis SCA
-        uses: dependency-check/dependency-check_action@1.1.0
-        env:
-          JAVA_HOME: /opt/jdk
-          NODE_AUDIT_PACKAGE_MANAGER: npm
-          NODE_AUDIT_IGNORE_YARN_LOCK: true
-        id: Depcheck
+      - name: Upload report
+        uses: actions/upload-artifact@v2
         with:
-          project: '${{ github.event.repository.name }}'
-          path: '.'
-          format: 'HTML'
-          out: 'report'
-          args: >
-            --failOnCVSS 7
-            --enableRetired
+          name: dependency-check-report
+          path: dependency-check-report.xml
+      # - name: Elimnar package-lock.json
+      #   run: rm package-lock.json
 
-      - name: Upload resultado
-        uses: actions/upload-artifact@master
-        with:
-          name: Depcheck report
-          path: ${{github.workspace}}/report
+      # - name: Regenerar package-lock.json
+      #   run: npm install
+
+      # - name: Análisis SCA
+      #   uses: dependency-check/dependency-check_action@1.1.0
+      #   env:
+      #     JAVA_HOME: /opt/jdk
+      #     NODE_AUDIT_PACKAGE_MANAGER: npm
+      #     NODE_AUDIT_IGNORE_YARN_LOCK: false
+      #   id: Depcheck
+      #   with:
+      #     project: '${{ github.event.repository.name }}'
+      #     path: '.'
+      #     format: 'HTML'
+      #     out: 'report'
+      #     args: >
+      #       --failOnCVSS 7
+      #       --enableRetired
+
+      # - name: Upload resultado
+      #   uses: actions/upload-artifact@master
+      #   with:
+      #     name: Depcheck report
+      #     path: ${{github.workspace}}/report

@@ -77,8 +77,8 @@ jobs:
       # - name: Elimnar package-lock.json
       #   run: rm package-lock.json
 
-      # - name: Regenerar package-lock.json
-      #   run: yarn install
+      - name: Regenerar package-lock.json
+        run: npm install
 
       - name: Compila el proyecto
         run: npm run build

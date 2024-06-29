@@ -72,6 +72,7 @@ jobs:
         uses: dependency-check/Dependency-Check_Action@1.1.0
         env:
           JAVA_HOME: /opt/jdk
+          NODE_AUDIT_PACKAGE_MANAGER: npm
         id: Depcheck
         with:
           project: '${{ github.event.repository.name }}'

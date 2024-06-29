@@ -64,12 +64,9 @@ jobs:
     needs: SAST
     runs-on: ubuntu-latest
     steps:
+
       - name: Obtener Codigo
         uses: actions/checkout@v4
-
-      # - name: Instalar DependencyCheck
-      #   run: |
-      #     curl -sSf https://dependency-check.org/install.sh | sh
 
       - name: Análisis SCA
         uses: dependency-check/Dependency-Check_Action@1.1.0

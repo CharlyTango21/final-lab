@@ -82,7 +82,7 @@ jobs:
       #     GITHUB_WORKSPACE: ${{ github.workspace }}
 
       - name: Análisis SCA
-        uses: dependency-check/dependency-check_action@1.1.0
+        uses: dependency-check/dependency-check_action@v6
         env:
           JAVA_HOME: /opt/jdk
           NODE_AUDIT_PACKAGE_MANAGER: npm

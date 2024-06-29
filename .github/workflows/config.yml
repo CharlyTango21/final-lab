@@ -73,6 +73,7 @@ jobs:
         env:
           JAVA_HOME: /opt/jdk
           NODE_AUDIT_PACKAGE_MANAGER: npm
+          NODE_AUDIT_IGNORE_YARN_LOCK: true
         id: Depcheck
         with:
           project: '${{ github.event.repository.name }}'

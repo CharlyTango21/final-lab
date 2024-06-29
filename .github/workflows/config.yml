@@ -78,7 +78,7 @@ jobs:
       #   run: rm package-lock.json
 
       - name: Regenerar package-lock.json
-        run: npm install
+        run: yarn install
 
       - name: Análisis SCA
         uses: dependency-check/dependency-check_action@1.1.0

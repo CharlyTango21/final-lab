@@ -60,52 +60,73 @@ jobs:
       - name: Mensaje de finalización
         run: echo "Termino Job "
 
-  # CSA:
+  CSA:
+    needs: SAST
+    runs-on: ubuntu-latest
+    steps:
+
+      # - name: Configurar JDK 17
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     java-version: '17'
+      #     distribution: 'adopt'
+
+      - name: Obtener Codigo
+        uses: actions/checkout@v4
+
+      # - name: Elimnar package-lock.json
+      #   run: rm package-lock.json
+
+      # - name: Regenerar package-lock.json
+      #   run: yarn install
+
+      - name: Compila el proyecto
+        run: npm run build
+
+      - name: Análisis SCA
+        uses: dependency-check/Dependency-Check_Action@1.1.0
+        env:
+          JAVA_HOME: /opt/jdk
+          #NODE_AUDIT_PACKAGE_MANAGER: npm
+          #NODE_AUDIT_IGNORE_YARN_LOCK: true
+        id: Depcheck
+        with:
+          project: '${{ github.event.repository.name }}'
+          path: '.'
+          format: 'HTML'
+          out: 'report'
+          args: >
+            --failOnCVSS 7
+            --enableRetired
+
+      - name: Subir resultado
+        uses: actions/upload-artifact@master
+        with:
+          name: Depcheck report
+          path: ${{github.workspace}}/reports
+
+      - name: Subir JAR
+        uses: actions/upload-artifact@master
+        with:
+          name: JAR
+          path: ${{github.workspace}}/build/libs/spring-lab_final-2.6.0.jar
+
+  # DOCKER_BUILD:
+  #   #needs: CSA
   #   needs: SAST
-  #   runs-on: ubuntu-latest
+  #   runs-on: self-hosted
   #   steps:
-
-  #     # - name: Configurar JDK 17
-  #     #   uses: actions/setup-java@v2
-  #     #   with:
-  #     #     java-version: '17'
-  #     #     distribution: 'adopt'
-
   #     - name: Obtener Codigo
   #       uses: actions/checkout@v4
 
-  #     # - name: Elimnar package-lock.json
-  #     #   run: rm package-lock.json
-
-  #     # - name: Regenerar package-lock.json
-  #     #   run: yarn install
-
-  #     - name: Análisis SCA
-  #       uses: dependency-check/Dependency-Check_Action@1.1.0
-  #       env:
-  #         JAVA_HOME: /opt/jdk
-  #         #NODE_AUDIT_PACKAGE_MANAGER: npm
-  #         #NODE_AUDIT_IGNORE_YARN_LOCK: true
-  #       id: Depcheck
+  #     - name: Docker Login
+  #       uses: docker/login-action@v3.0.0
   #       with:
-  #         project: '${{ github.event.repository.name }}'
-  #         path: '.'
-  #         format: 'HTML'
-  #         out: 'report'
-  #         args: >
-  #           --failOnCVSS 7
-  #           --enableRetired
+  #         username: $ {{ secret.DOCKER_USER }}
+  #         password: $ {{ secret.DOCKER_PASSWORD }}
 
-  #     - name: Descargar resultado
-  #       uses: actions/upload-artifact@master
+  #     - name: Descargar JAR
+  #       uses: action/download-artifact@master
   #       with:
-  #         name: Depcheck report
-  #         path: ${{github.workspace}}/reports
-
-  DOCKER_BUILD:
-    #needs: CSA
-    needs: SAST
-    runs-on: self-hosted
-    steps:
-      - name: Obtener Codigo
-        uses: actions/checkout@v4
+  #         name: JAR
+  #         path: ${{github.workspace}}

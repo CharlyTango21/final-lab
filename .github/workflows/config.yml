@@ -5,85 +5,71 @@ on:
       - feature/lab_final
 
 jobs:
-  SAST:
+  # SAST:
+  #   runs-on: ubuntu-latest
+  #   steps:
+      
+  #     - name: Configurar JDK 17
+  #       uses: actions/setup-java@v2
+  #       with:
+  #           java-version: '17'
+  #           distribution: 'adopt'
+      
+  #     - name: Obtener Codigo
+  #       uses: actions/checkout@v4
+
+  #     - name: Validar existencia del proyecto en SonarCloud
+  #       id: validarProyectoEnSonar
+  #       run: |
+  #         set +e
+  #         curl -f -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/projects/create' -d 'name=${{ github.event.repository.name }}' -d 'project=${{ github.event.repository.name }}' -d 'organization=labfinal-devsecops' -d 'visibility=public'
+  #         if [ $? -ne 0 ]
+  #         then
+  #           echo "Proyecto ya existe en SonarCloud"
+  #           # bash./.github/workflows/send-email.sh "Error SonarCloud" "Se produjo un error en la instalación de SonarCloud en ${REPO_GITHUB}."
+  #         else
+  #           echo "Proyecto ${{ github.event.repository.name }} creado exitosamente"
+
+  #           echo "Se establece rama main como rama por defecto"
+  #           curl -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/project_branches/rename' '-d name=main' -d 'name=${{ github.event.repository.name }}'
+  #         fi
+
+  #     - name: Instalar Sonar Scanner
+  #       id: InstallSonarScan
+  #       run: |
+  #         npm install -g sonar-scanner
+
+  #     - name: Análisis SonarCloud
+  #       if: steps.InstallSonarScan.outcome == 'success' 
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       run: |
+  #         sonar-scanner \
+  #           -Dsonar.projectKey=${{ github.event.repository.name }} \
+  #           -Dsonar.organization=labfinal-devsecops \
+  #           -Dsonar.host.url=https://sonarcloud.io \
+  #           -Dsonar.login=$SONAR_TOKEN \
+  #           -Dsonar.branch.name=feature/lab_final \
+  #           -Dsonar.sources=. \
+  #           -Dsonar.language=js \
+  #           -Dsonar.sourceEncoding=UTF-8 \
+  #           -Dsonar.exclusions=**/node_modules/** \
+  #           -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
+  #           -Dsonar.qualitygate.wait=true
+
+  #     - name: Mensaje de finalización
+  #       run: echo "Termino Job "
+
+  CSA:
     runs-on: ubuntu-latest
     steps:
-      
-      - name: Configurar JDK 17
-        uses: actions/setup-java@v2
-        with:
-            java-version: '17'
-            distribution: 'adopt'
-      
       - name: Obtener Codigo
         uses: actions/checkout@v4
 
-      - name: Validar existencia del proyecto en SonarCloud
-        id: validarProyectoEnSonar
+      - name: Instalar DependencyCheck
         run: |
-          set +e
-          curl -f -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/projects/create' -d 'name=${{ github.event.repository.name }}' -d 'project=${{ github.event.repository.name }}' -d 'organization=labfinal-devsecops' -d 'visibility=public'
-          if [ $? -ne 0 ]
-          then
-            echo "Proyecto ya existe en SonarCloud"
-            # bash./.github/workflows/send-email.sh "Error SonarCloud" "Se produjo un error en la instalación de SonarCloud en ${REPO_GITHUB}."
-          else
-            echo "Proyecto ${{ github.event.repository.name }} creado exitosamente"
+          curl -sSf https://dependency-check.org/install.sh | sh
 
-            echo "Se establece rama main como rama por defecto"
-            curl -X POST -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/project_branches/rename' '-d name=main' -d 'name=${{ github.event.repository.name }}'
-          fi
-
-      - name: Instalar Sonar Scanner
-        id: InstallSonarScan
+      - name: Análsis SCA
         run: |
-          npm install -g sonar-scanner
-
-      - name: Analisis SonarCloud
-        if: steps.InstallSonarScan.outcome == 'success' 
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=${{ github.event.repository.name }} \
-            -Dsonar.organization=labfinal-devsecops \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.branch.name=feature/lab_final \
-            -Dsonar.sources=. \
-            -Dsonar.language=js \
-            -Dsonar.sourceEncoding=UTF-8 \
-            -Dsonar.exclusions=**/node_modules/** \
-            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
-            -Dsonar.qualitygate.wait=true
-
-
-      - name: Verificar resultado de SonarCloud
-        run: |
-          if [ $(sonar-scanner -Dsonar.qualitygate.status) != "OK" ]; then
-            echo "SonarCloud encontro vulnerabilidades. Deteniendo workflow."
-            exit 1
-          fi
-      # - name: Enviar informe de análisis a SonarCloud
-      #   uses: sonarcloud/sonarcloud-github-action@v1
-      #   with:
-      #     sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
-      #     project_key: ${{ github.event.repository.name }}
-      #     organization: labfinal-devsecops
-      #     branch: feature/lab_final
-        
-      # - name: Notificar por correo electrónico en caso de falla o vulnerabilidades críticas
-      #   if: failure() || (contains(github.event.pull_request.labels, 'vulnerability:high') || contains(github.event.pull_request.labels, 'vulnerability:critical'))
-      #   uses: softprops/gmail@v1
-      #   with:
-      #       from: "karlangastorres9@gmail.com" #${{ secrets.GMAIL_USERNAME }}
-      #       to: ${{ secrets.EMAIL_TO }}
-      #       subject: "Análisis de SonarCloud fallido o encontró vulnerabilidades críticas"
-      #       body: |
-      #         El análisis de SonarCloud falló o encontró vulnerabilidades críticas en el repositorio ${{ github.event.repository.name }}.
-      #         Por favor, revise el informe de análisis en SonarCloud para obtener más información.    
-
-      - name: Mensaje de finalización
-        run: echo "Termino Job "
-
-
+          dependency-check --scanSet --format XML --out report.xml .

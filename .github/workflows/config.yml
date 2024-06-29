@@ -81,6 +81,11 @@ jobs:
       #     GITHUB_REPO: ${{ github.event.repository.name }}
       #     GITHUB_WORKSPACE: ${{ github.workspace }}
 
+      - name: Debug env vars
+        run: |
+          echo "NODE_AUDIT_PACKAGE_MANAGER: $NODE_AUDIT_PACKAGE_MANAGER"
+          echo "NODE_AUDIT_IGNORE_YARN_LOCK: $NODE_AUDIT_IGNORE_YARN_LOCK"
+
       - name: Análisis SCA
         uses: dependency-check/Dependency-Check_Action@v2
         env:

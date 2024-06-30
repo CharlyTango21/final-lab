@@ -132,7 +132,7 @@ jobs:
           password: $ {{ secret.DOCKER_PASSWORD }}
 
       - name: Descargar JAR
-        uses: action/download-artifact@master
+        uses: actions/download-artifact@master
         with:
           name: JAR
           path: ${{github.workspace}}

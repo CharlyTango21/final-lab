@@ -127,32 +127,32 @@ jobs:
     runs-on: self-hosted
     steps:
 
-      - name: Obtener Codigo
-        uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-      - name: Docker Login
-        uses: docker/login-action@v3.0.0
-        with:
-          username: $ {{ secret.DOCKER_USER }}
-          password: $ {{ secret.DOCKER_PASSWORD }}
+      # - name: Docker Login
+      #   uses: docker/login-action@v3.0.0
+      #   with:
+      #     username: $ {{ secret.DOCKER_USER }}
+      #     password: $ {{ secret.DOCKER_PASSWORD }}
 
-      - name: Descargar JAR
-        uses: actions/download-artifact@master
-        with:
-          name: JAR
-          path: ${{github.workspace}}
+      # - name: Descargar JAR
+      #   uses: actions/download-artifact@master
+      #   with:
+      #     name: JAR
+      #     path: ${{github.workspace}}
 
-      - name: Build Docker
-        run: |
-          docker build --tag charlytango21/lab-final:latest .
+      # - name: Build Docker
+      #   run: |
+      #     docker build --tag charlytango21/lab-final:latest .
           
     
-      - name: Push Docker
-        run: |
-          docker push charlytango21/lab-final:tagname
+      # - name: Push Docker
+      #   run: |
+      #     docker push charlytango21/lab-final:tagname
 
-      - name: Finish Job
-        run: echo "Termino del Job "
+      # - name: Finish Job
+      #   run: echo "Termino del Job "
 
   # DOCKER_SCAN:
   #   needs: DOCKER_BUILD

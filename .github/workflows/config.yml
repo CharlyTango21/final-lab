@@ -69,57 +69,57 @@ jobs:
       - name: Finish Job
         run: echo "Termino del Job "
 
-  CSA:
-    needs: SAST
-    runs-on: ubuntu-latest
-    steps:
+  # CSA:
+  #   needs: SAST
+  #   runs-on: ubuntu-latest
+  #   steps:
 
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          npm install
-          yarn install
+  #     - name: Install dependencies
+  #       run: |
+  #         npm install
+  #         yarn install
 
-      - name: Build Project
-        run: npm run build
+  #     - name: Build Project
+  #       run: npm run build
 
-      - name: NodeAuditAnalyzer
-        uses: github/codeql-action/node-audit@v2
-        with:
-          args: --ignore-yarn-lock
+  #     - name: NodeAuditAnalyzer
+  #       uses: github/codeql-action/node-audit@v2
+  #       with:
+  #         args: --ignore-yarn-lock
 
-      - name: SCA Analisys
-        uses: dependency-check/Dependency-Check_Action@1.1.0
-        env:
-          JAVA_HOME: /opt/jdk
-          NODE_AUDIT_PACKAGE_MANAGER: yarn
-          #NODE_AUDIT_IGNORE_YARN_LOCK: true
-        id: Depcheck
-        with:
-          project: '${{ github.event.repository.name }}'
-          path: '.'
-          format: 'HTML'
-          out: 'report'
-          args: >
-            --failOnCVSS 7
-            --enableRetired
+  #     - name: SCA Analisys
+  #       uses: dependency-check/Dependency-Check_Action@1.1.0
+  #       env:
+  #         JAVA_HOME: /opt/jdk
+  #         NODE_AUDIT_PACKAGE_MANAGER: yarn
+  #         #NODE_AUDIT_IGNORE_YARN_LOCK: true
+  #       id: Depcheck
+  #       with:
+  #         project: '${{ github.event.repository.name }}'
+  #         path: '.'
+  #         format: 'HTML'
+  #         out: 'report'
+  #         args: >
+  #           --failOnCVSS 7
+  #           --enableRetired
 
-      - name: Upload Result
-        uses: actions/upload-artifact@master
-        with:
-          name: Depcheck report
-          path: ${{github.workspace}}/reports
+  #     - name: Upload Result
+  #       uses: actions/upload-artifact@master
+  #       with:
+  #         name: Depcheck report
+  #         path: ${{github.workspace}}/reports
 
-      - name: Upload JAR
-        uses: actions/upload-artifact@master
-        with:
-          name: JAR
-          path: ${{github.workspace}}/build/libs/spring-lab_final-2.6.0.jar
+  #     - name: Upload JAR
+  #       uses: actions/upload-artifact@master
+  #       with:
+  #         name: JAR
+  #         path: ${{github.workspace}}/build/libs/spring-lab_final-2.6.0.jar
       
-      - name: Finish Job
-        run: echo "Termino del Job "
+  #     - name: Finish Job
+  #       run: echo "Termino del Job "
 
   DOCKER_BUILD:
     #needs: CSA

@@ -141,9 +141,9 @@ jobs:
         run: |
           docker build --tag charlytango21/final-lab:latest .
     
-      # - name: Push Docker
-      #   run: |
-      #     docker push charlytango21/final-lab:latest
+      - name: Push Docker
+        run: |
+          docker push charlytango21/final-lab:latest
 
       - name: Finish Job
         run: echo "Termino del Job "

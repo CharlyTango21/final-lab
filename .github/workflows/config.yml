@@ -16,7 +16,7 @@ jobs:
             distribution: 'adopt'
       
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Validate existence of the project in SonarCloud
         run: |
@@ -75,7 +75,7 @@ jobs:
   #   steps:
 
   #     - name: Checkout Code
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@v2
 
   #     - name: Install dependencies
   #       run: |
@@ -130,11 +130,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      # - name: Docker Login
-      #   uses: docker/login-action@v3.0.0
-      #   with:
-      #     username: $ {{ secret.DOCKER_USER }}
-      #     password: $ {{ secret.DOCKER_PASSWORD }}
+      - name: Docker Login
+        uses: docker/login-action@v3.0.0
+        with:
+          username: $ {{ secret.DOCKER_USER }}
+          password: $ {{ secret.DOCKER_PASSWORD }}
 
       # - name: Descargar JAR
       #   uses: actions/download-artifact@master

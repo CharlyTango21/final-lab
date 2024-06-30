@@ -136,6 +136,14 @@ jobs:
           username: $ {{ secret.DOCKER_USER }}
           password: $ {{ secret.DOCKER_PASSWORD }}
 
+      - name: Build and push Docker image
+        run: |
+          docker build -t lab-final .
+          docker tag my-app ${{ secrets.DOCKER_USER }}/lab-final:latest
+          docker push ${{ secrets.DOCKER_USER }}/lab-final:latest
+
+      - name: Logout of Docker Hub
+        uses: docker/logout-action@v3.0.0
       # - name: Descargar JAR
       #   uses: actions/download-artifact@master
       #   with:

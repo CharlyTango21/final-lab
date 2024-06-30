@@ -94,8 +94,6 @@ jobs:
   #       uses: dependency-check/Dependency-Check_Action@1.1.0
   #       env:
   #         JAVA_HOME: /opt/jdk
-  #         NODE_AUDIT_PACKAGE_MANAGER: yarn
-  #         #NODE_AUDIT_IGNORE_YARN_LOCK: true
   #       id: Depcheck
   #       with:
   #         project: '${{ github.event.repository.name }}'
@@ -122,7 +120,7 @@ jobs:
   #       run: echo "Termino del Job "
 
   DOCKER_BUILD:
-    #needs: CSA
+    # needs: CSA
     needs: SAST
     runs-on: self-hosted
     steps:
@@ -136,49 +134,55 @@ jobs:
           username: $ {{ secret.DOCKER_USER }}
           password: $ {{ secret.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Descargar JAR
+        uses: actions/download-artifact@master
+        with:
+          name: JAR
+          path: ${{github.workspace}}
+
+      - name: Build Docker
         run: |
-          docker build -t lab-final .
-          docker tag lab-final ${{ secrets.DOCKER_USER }}/lab-final:latest
-          docker push ${{ secrets.DOCKER_USER }}/lab-final:latest
-
-      - name: Logout of Docker Hub
-        uses: docker/logout-action@v3.0.0
-      # - name: Descargar JAR
-      #   uses: actions/download-artifact@master
-      #   with:
-      #     name: JAR
-      #     path: ${{github.workspace}}
-
-      # - name: Build Docker
-      #   run: |
-      #     docker build --tag charlytango21/lab-final:latest .
+          docker build --tag charlytango21/lab-final:latest .
           
     
-      # - name: Push Docker
+      - name: Push Docker
+        run: |
+          docker push charlytango21/lab-final:tagname
+
+  DOCKER_SCAN:
+    needs: DOCKER_BUILD
+    runs-on: ubunto-latest
+    steps:
+
+      - name: Docker Login
+        uses: docker/login-action@v3.0.0
+        with:
+          username: $ {{ secret.DOCKER_USER }}
+          password: $ {{ secret.DOCKER_PASSWORD }}
+
+      - name: Pull Image Docker
+        run: |
+          docker pull charlytango21/lab-final:latest
+
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with: 
+          image-ref: 'charlytango21/lab-final:latest'
+          format: 'table'
+
+  DAST:
+    needs: DOCKER_SCAN
+    runs-on: self-hosted
+    steps:
+      
+      # - name: Despliegue de la aplicación
       #   run: |
-      #     docker push charlytango21/lab-final:tagname
+      #     docker run -p 8085:8085 --name lab-final-deploy -d charlytango21/lab-final:latest 
+        
+      # - name: Sleep
+      #   run: sleep 3
 
-      # - name: Finish Job
-      #   run: echo "Termino del Job "
-
-  # DOCKER_SCAN:
-  #   needs: DOCKER_BUILD
-  #   runs-on: ubunto-latest
-  #   steps:
-
-  #     - name: Docker Login
-  #       uses: docker/login-action@v3.0.0
-  #       with:
-  #         username: $ {{ secret.DOCKER_USER }}
-  #         password: $ {{ secret.DOCKER_PASSWORD }}
-
-  #     - name: Pull Image Docker
-  #       run: |
-  #         docker pull charlytango21/final-lab:latest
-
-  #     - name: Run Trivy Vulnerability Scanner
-  #       uses: aquasecurity/trivy-action@master
-  #       with: 
-  #         image-ref: 'charlytango21/final-lab:latest'
-  #         format: 'table'
+      - name: OWASP ZAP Scan
+        uses: zaproxy/action-baseline@v0.11.0
+        with: 
+          targert: 'http://localhost:8085'

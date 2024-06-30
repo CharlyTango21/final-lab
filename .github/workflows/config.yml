@@ -144,11 +144,12 @@ jobs:
 
       - name: Build Docker
         run: |
-          docker build --tag charlytango21/final-lab:latest .
+          docker build --tag charlytango21/lab-final:latest .
+          
     
       - name: Push Docker
         run: |
-          docker push charlytango21/final-lab:latest
+          docker push charlytango21/lab-final:tagname
 
       - name: Finish Job
         run: echo "Termino del Job "

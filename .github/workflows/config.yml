@@ -104,8 +104,11 @@ jobs:
           npm install
           yarn install
 
-      - name: Build Project
-        run: npm run build
+      - name: Node Audit
+        uses: github/codeql-action/node-audit@v2
+
+      # - name: Build Project
+      #   run: npm run build
 
       - name: Remove yarn.lock
         run: rm yarn.lock

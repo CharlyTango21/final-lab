@@ -104,9 +104,6 @@ jobs:
           npm install
           yarn install
 
-      - name: Node Audit
-        uses: github/codeql-action/node-audit@v2
-
       # - name: Build Project
       #   run: npm run build
 

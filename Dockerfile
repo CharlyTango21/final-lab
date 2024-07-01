@@ -16,4 +16,4 @@ COPY --from=builder /app/dist .
 EXPOSE 80
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
 
-ADD spring-lab_final-2.60.jar /app/spring-lab_final-2.60.jar
+ADD spring-lab_final-2.6.0.jar /app/spring-lab_final-2.6.0.jar

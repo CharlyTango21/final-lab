@@ -42,9 +42,9 @@ jobs:
             echo "Error al instalar Sonar Scanner"
             exit 1
            fi
-
-      - name: SonarCloud Analysis
-        if: steps.InstallSonarScan.outcome == 'success' 
+      
+      - name: SonarCloud Analysis and Check Results
+        if: steps.InstallSonarScan.outcome == 'success'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
@@ -58,16 +58,10 @@ jobs:
             -Dsonar.language=js \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.exclusions=**/node_modules/** \
-            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx 
-          if [ $? -ne 0 ]
-          then
-            echo "Error al ejecutar SonarCloud"
-            exit 1
-          fi
+            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
+            -Dsonar.scan.export.json=sonar-report.json
 
-      - name: Validate Vulnerabilities
-        run: |
-          vulnerabilities=$(sonar-scanner -Dsonar.projectKey=${{ github.event.repository.name }} -Dsonar.organization=labfinal-devsecops -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=feature/lab_final -Dsonar.sources=. -Dsonar.language=js -Dsonar.sourceEncoding=UTF-8 -Dsonar.exclusions=**/node_modules/** -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx --json | jq '.issues[] | select(.severity == "CRITICAL" or.severity == "HIGH" or.severity == "MEDIUM")')
+          vulnerabilities=$(jq '.issues[] | select(.severity == "CRITICAL" or .severity == "HIGH" or .severity == "MEDIUM")' sonar-report.json)
           if [ -n "$vulnerabilities" ]; then
             echo "Vulnerabilities found:"
             echo "$vulnerabilities"
@@ -75,6 +69,30 @@ jobs:
           else
             echo "No vulnerabilities found"
           fi
+
+      # - name: SonarCloud Analysis
+      #   if: steps.InstallSonarScan.outcome == 'success' 
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   run: |
+      #     sonar-scanner \
+      #       -Dsonar.projectKey=${{ github.event.repository.name }} \
+      #       -Dsonar.organization=labfinal-devsecops \
+      #       -Dsonar.host.url=https://sonarcloud.io \
+      #       -Dsonar.login=$SONAR_TOKEN \
+      #       -Dsonar.branch.name=feature/lab_final \
+      #       -Dsonar.sources=. \
+      #       -Dsonar.language=js \
+      #       -Dsonar.sourceEncoding=UTF-8 \
+      #       -Dsonar.exclusions=**/node_modules/** \
+      #       -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx 
+      #     if [ $? -ne 0 ]
+      #     then
+      #       echo "Error al ejecutar SonarCloud"
+      #       exit 1
+      #     fi
+
+      
 
       - name: Finish Job
         run: echo "Termino del Job "

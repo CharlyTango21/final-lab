@@ -91,10 +91,10 @@ jobs:
       - name: Finish Job
         run: echo "Termino del Job "
 
-  CSA:
-    needs: SAST
-    runs-on: ubuntu-latest
-    steps:
+  # CSA:
+  #   needs: SAST
+  #   runs-on: ubuntu-latest
+  #   steps:
 
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -137,7 +137,7 @@ jobs:
           path: ${{github.workspace}}/build/libs/spring-lab_final-2.6.0.jar
 
   DOCKER_BUILD:
-    needs: CSA
+    needs: SAST
     runs-on: self-hosted
     steps:
 

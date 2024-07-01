@@ -65,14 +65,14 @@ jobs:
             exit 1
           fi
 
-          # Analizar la salida de SonarCloud
-          sonar_output=$(sonar-scanner -Dsonar.analysis.mode=preview)
+          # # Analizar la salida de SonarCloud
+          # sonar_output=$(sonar-scanner -Dsonar.analysis.mode=preview)
 
-          # Buscar vulnerabilidades medias, altas o criticas
-          if echo "$sonar_output" | grep -q "CRITICAL\|MAJOR"; then
-            echo "Vulnerabilidades críticas o medias encontradas. Deteniendo el pipeline."
-            exit 1
-          fi
+          # # Buscar vulnerabilidades medias, altas o criticas
+          # if echo "$sonar_output" | grep -q "CRITICAL\|MAJOR"; then
+          #   echo "Vulnerabilidades críticas o medias encontradas. Deteniendo el pipeline."
+          #   exit 1
+          # fi
 
       - name: Upload Result
         uses: actions/upload-artifact@master

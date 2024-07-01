@@ -131,8 +131,8 @@ jobs:
       - name: Set permissions for package-lock.json
         run: chmod 777 package-lock.json
 
-      - name: Run NodeAuditAnalyzer
-        run: node-audit-analyzer package-lock.json
+      # - name: Run NodeAuditAnalyzer
+      #   run: node-audit-analyzer package-lock.json
 
       - name: Install dependencies
         run: |

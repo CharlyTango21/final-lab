@@ -72,7 +72,7 @@ jobs:
           -H 'Authorization: Bearer $SONAR_TOKEN' \
           -H 'Content-Type: application/json' \
           -d '{
-            "componentKeys": ["${GITHUB_REPO}"],
+            "componentKeys": ["${{ github.event.repository.name }}"],
             "types": ["VULNERABILITY"]
           }'
             

@@ -72,6 +72,17 @@ jobs:
             exit 1
           fi
 
+      - name: Upload Result
+        uses: actions/upload-artifact@master
+        with:
+          name: Depcheck report
+          path: ${{github.workspace}}/reports
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@master
+        with:
+          name: JAR
+          path: ${{github.workspace}}/build/libs/spring-lab_final-2.6.0.jar
       # - name: Check Vulnerabity
       #   run: |
       #     curl -X GET \
@@ -160,19 +171,17 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # - name: Descargar JAR
-      #   uses: actions/download-artifact@master
-      #   with:
-      #     name: JAR
-      #     path: ${{ github.workspace }}
+      - name: Descargar JAR
+        uses: actions/download-artifact@master
+        with:
+          name: JAR
+          path: ${{ github.workspace }}
 
-      - name: Build Docker
+      - name: Build and Push Docker
         run: |
-          docker build --tag charlytango21/lab-final:latest .
-              
-      - name: Push Docker
-        run: |
+          docker build -t charlytango21/lab-final:latest .
           docker push charlytango21/lab-final:latest
+                        
 
   DOCKER_SCAN:
     needs: DOCKER_BUILD

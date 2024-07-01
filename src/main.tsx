@@ -13,6 +13,7 @@ import palette from "./theme/palette";
 import router from "./routes";
 import MainLoadingScreen from "./components/MainLoadingScreen";
 
+
 store.dispatch(extendedApi.endpoints.getConfiguration.initiate(undefined));
 
 const root = ReactDOM.createRoot(

@@ -5,7 +5,44 @@ on:
       - feature/lab_final
 
 jobs:
+  SAST2:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SonarCloud
+        env:
+          SONARCLOUD_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONARCLOUD_ORGANIZATION: ${{ github.event.repository.name }}
+          SONARCLOUD_PROJECT_KEY: labfinal
+        run: |
+          curl -s -f -X GET \
+            https://sonarcloud.io/api/projects/search \
+            -H 'Authorization: Bearer $SONARCLOUD_TOKEN' \
+            -d 'organization=$SONARCLOUD_ORGANIZATION&q=$SONARCLOUD_PROJECT_KEY'
+          if [ $? -ne 0 ]; then
+            echo "Project not found in SonarCloud, creating it..."
+            curl -s -X POST \
+              https://sonarcloud.io/api/projects/create \
+              -H 'Authorization: Bearer $SONARCLOUD_TOKEN' \
+              -H 'Content-Type: application/json' \
+              -d '{"name":"labfinal","project": {"key": "labfinal", "name": "labfinal", "visibility": "public"}}'
+          fi
+
+      - name: Run SonarCloud analysis
+        run: mvn sonar:sonar
+
+      - name: Check SonarCloud results
+        run: |
+          if [ $(mvn sonar:sonar | grep -c "CRITICAL|HIGH|MEDIUM") -gt 0 ]; then 
+            echo "Se encontron vulnerabilidades en la ejecucción del pipeline"
+            exit 1; 
+          fi
+
   SAST:
+    needs: SAST2
     runs-on: ubuntu-latest
     steps:
       
@@ -59,12 +96,29 @@ jobs:
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.exclusions=**/node_modules/** \
             -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
-            # -Dsonar.qualitygate.wait=true
           if [ $? -ne 0 ]
           then
             echo "Error al ejecutar SonarCloud"
             exit 1
           fi
+
+      - name: Process SonarCloud Results
+        run: |
+          # Get the SonarCloud analysis results
+          sonarcloud_results=$(sonar-scanner -Dsonar.analysis.mode=preview)
+  
+          # Extract the vulnerabilities from the results
+          vulnerabilities=$(echo "$sonarcloud_results" | jq -r '.issues[] | select(.type == "VULNERABILITY") | .message')
+  
+          # Filter vulnerabilities by type (e.g. SQL Injection, Cross-Site Scripting)
+          sql_injection_vulns=$(echo "$vulnerabilities" | grep -o "SQL Injection")
+          xss_vulns=$(echo "$vulnerabilities" | grep -o "Cross-Site Scripting")
+  
+          # Print the filtered vulnerabilities
+          echo "SQL Injection Vulnerabilities:"
+            echo "$sql_injection_vulns"
+            echo "Cross-Site Scripting Vulnerabilities:"
+            echo "$xss_vulns"  
 
       - name: Finish Job
         run: echo "Termino del Job "

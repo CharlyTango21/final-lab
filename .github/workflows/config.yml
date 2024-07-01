@@ -107,10 +107,8 @@ jobs:
       - name: Build Project
         run: npm run build
 
-      # - name: NodeAuditAnalyzer
-      #   uses: github/codeql-action/node-audit@v2
-      #   with:
-      #     args: --ignore-yarn-lock
+      - name: Remove yarn.lock
+        run: rm yarn.lock
 
       - name: SCA Analisys
         uses: dependency-check/Dependency-Check_Action@1.1.0
@@ -137,9 +135,6 @@ jobs:
         with:
           name: JAR
           path: ${{github.workspace}}/build/libs/spring-lab_final-2.6.0.jar
-      
-      - name: Finish Job
-        run: echo "Termino del Job "
 
   DOCKER_BUILD:
     needs: CSA

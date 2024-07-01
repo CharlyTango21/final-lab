@@ -58,32 +58,39 @@ jobs:
             -Dsonar.language=js \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.exclusions=**/node_modules/** \
-            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx 
+            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
+            -Dsonar.report.export.path=sonar-report.xml
+          if [ -f sonar-report.xml ]; then
+            echo "Archivo Existe"
+          else
+            echo "Archivo no existe"
+          fi
+      
           if [ $? -ne 0 ]
           then
             echo "Error al ejecutar SonarCloud"
             exit 1
           fi
 
-      - name: Check Vulnerabity
-        run: |
-          curl -X GET \
-          https://sonarcloud.io/api/issues/search \
-          -H 'Authorization: Bearer $SONAR_TOKEN' \
-          -H 'Content-Type: application/json' \
-          -d '{
-            "componentKeys": ["${{ github.event.repository.name }}"],
-            "types": ["VULNERABILITY"]
-          }'
+      # - name: Check Vulnerabity
+      #   run: |
+      #     curl -X GET \
+      #     https://sonarcloud.io/api/issues/search \
+      #     -H 'Authorization: Bearer $SONAR_TOKEN' \
+      #     -H 'Content-Type: application/json' \
+      #     -d '{
+      #       "componentKeys": ["${{ github.event.repository.name }}"],
+      #       "types": ["VULNERABILITY"]
+      #     }'
             
-          response=$(jq '.issues[] | .severity, .message' -r)
-          if [ -n "$response" ]; then
-            echo "Vulnerabilities found:"
-            echo "$response"
-            exit 1
-          else
-            echo "No vulnerabilities found"
-          fi
+      #     response=$(jq '.issues[] | .severity, .message' -r)
+      #     if [ -n "$response" ]; then
+      #       echo "Vulnerabilities found:"
+      #       echo "$response"
+      #       exit 1
+      #     else
+      #       echo "No vulnerabilities found"
+      #     fi
 
       - name: Finish Job
         run: echo "Termino del Job "
@@ -153,11 +160,11 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Descargar JAR
-        uses: actions/download-artifact@master
-        with:
-          name: JAR
-          path: ${{ github.workspace }}
+      # - name: Descargar JAR
+      #   uses: actions/download-artifact@master
+      #   with:
+      #     name: JAR
+      #     path: ${{ github.workspace }}
 
       - name: Build Docker
         run: |

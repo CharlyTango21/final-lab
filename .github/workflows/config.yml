@@ -65,14 +65,66 @@ jobs:
             exit 1
           fi
 
-          # # Analizar la salida de SonarCloud
-          # sonar_output=$(sonar-scanner -Dsonar.analysis.mode=preview)
+    
+      - name: Check Vulnerabity
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          curl -X GET \
+          https://sonarcloud.io/api/issues/search \
+          -H 'Authorization: Bearer $SONAR_TOKEN' \
+          -H 'Content-Type: application/json' \
+          -d '{
+            "componentKeys": ["${{ github.event.repository.name }}"],
+            "types": ["VULNERABILITY"]
+          }'
+            
+          response=$(jq '.issues[] | .severity, .message' -r)
+          if [ -n "$response" ]; then
+            echo "Vulnerabilities found:"
+            echo "$response"
+            exit 1
+          else
+            echo "No vulnerabilities found"
+          fi
 
-          # # Buscar vulnerabilidades medias, altas o criticas
-          # if echo "$sonar_output" | grep -q "CRITICAL\|MAJOR"; then
-          #   echo "Vulnerabilidades críticas o medias encontradas. Deteniendo el pipeline."
-          #   exit 1
-          # fi
+      - name: Finish Job
+        run: echo "Termino del Job "
+
+  CSA:
+    needs: SAST
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          npm install
+          yarn install
+
+      - name: Build Project
+        run: npm run build
+
+      - name: NodeAuditAnalyzer
+        uses: github/codeql-action/node-audit@v2
+        with:
+          args: --ignore-yarn-lock
+
+      - name: SCA Analisys
+        uses: dependency-check/Dependency-Check_Action@1.1.0
+        env:
+          JAVA_HOME: /opt/jdk
+        id: Depcheck
+        with:
+          project: '${{ github.event.repository.name }}'
+          path: '.'
+          format: 'HTML'
+          out: 'report'
+          args: >
+            --failOnCVSS 7
+            --enableRetired
 
       - name: Upload Result
         uses: actions/upload-artifact@master
@@ -85,82 +137,12 @@ jobs:
         with:
           name: JAR
           path: ${{github.workspace}}/build/libs/spring-lab_final-2.6.0.jar
-      # - name: Check Vulnerabity
-      #   run: |
-      #     curl -X GET \
-      #     https://sonarcloud.io/api/issues/search \
-      #     -H 'Authorization: Bearer $SONAR_TOKEN' \
-      #     -H 'Content-Type: application/json' \
-      #     -d '{
-      #       "componentKeys": ["${{ github.event.repository.name }}"],
-      #       "types": ["VULNERABILITY"]
-      #     }'
-            
-      #     response=$(jq '.issues[] | .severity, .message' -r)
-      #     if [ -n "$response" ]; then
-      #       echo "Vulnerabilities found:"
-      #       echo "$response"
-      #       exit 1
-      #     else
-      #       echo "No vulnerabilities found"
-      #     fi
-
+      
       - name: Finish Job
         run: echo "Termino del Job "
 
-  # CSA:
-  #   needs: SAST
-  #   runs-on: ubuntu-latest
-  #   steps:
-
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v2
-
-  #     - name: Install dependencies
-  #       run: |
-  #         npm install
-  #         yarn install
-
-  #     - name: Build Project
-  #       run: npm run build
-
-  #     - name: NodeAuditAnalyzer
-  #       uses: github/codeql-action/node-audit@v2
-  #       with:
-  #         args: --ignore-yarn-lock
-
-  #     - name: SCA Analisys
-  #       uses: dependency-check/Dependency-Check_Action@1.1.0
-  #       env:
-  #         JAVA_HOME: /opt/jdk
-  #       id: Depcheck
-  #       with:
-  #         project: '${{ github.event.repository.name }}'
-  #         path: '.'
-  #         format: 'HTML'
-  #         out: 'report'
-  #         args: >
-  #           --failOnCVSS 7
-  #           --enableRetired
-
-  #     - name: Upload Result
-  #       uses: actions/upload-artifact@master
-  #       with:
-  #         name: Depcheck report
-  #         path: ${{github.workspace}}/reports
-
-  #     - name: Upload JAR
-  #       uses: actions/upload-artifact@master
-  #       with:
-  #         name: JAR
-  #         path: ${{github.workspace}}/build/libs/spring-lab_final-2.6.0.jar
-      
-  #     - name: Finish Job
-  #       run: echo "Termino del Job "
-
   DOCKER_BUILD:
-    # needs: CSA
-    needs: SAST
+    needs: CSA
     runs-on: self-hosted
     steps:
 
@@ -172,12 +154,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # - name: Descargar JAR
-      #   uses: actions/download-artifact@master
-      #   with:
-      #     name: JAR
-      #     path: ${{ github.workspace }}
 
       - name: Build and Push Docker
         run: |

@@ -66,7 +66,6 @@ jobs:
           fi
 
       - name: Validate Vulnerabilities
-        if: steps.SonarCloudAnalysis.outcome == 'success'
         run: |
           vulnerabilities=$(sonar-scanner -Dsonar.projectKey=${{ github.event.repository.name }} -Dsonar.organization=labfinal-devsecops -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=feature/lab_final -Dsonar.sources=. -Dsonar.language=js -Dsonar.sourceEncoding=UTF-8 -Dsonar.exclusions=**/node_modules/** -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx --json | jq '.issues[] | select(.severity == "CRITICAL" or.severity == "HIGH" or.severity == "MEDIUM")')
           if [ -n "$vulnerabilities" ]; then

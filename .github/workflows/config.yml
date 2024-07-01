@@ -65,8 +65,7 @@ jobs:
             exit 1
           fi
 
-    
-      - name: Check Vulnerabity
+      - name: Check Vulnerability
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
@@ -79,17 +78,32 @@ jobs:
             "types": ["VULNERABILITY"]
           }'
             
-          response=$(jq '.issues[] | .severity, .message' -r)
+          response=$(jq '.issues[] |.severity,.message' -r)
           if [ -n "$response" ]; then
             echo "Vulnerabilities found:"
             echo "$response"
-            exit 1
+              
+            # Check for medium, high, or critical vulnerabilities
+            critical_vulns=$(jq '.issues[] | select(.severity == "CRITICAL") |.message' -r)
+            high_vulns=$(jq '.issues[] | select(.severity == "HIGH") |.message' -r)
+            medium_vulns=$(jq '.issues[] | select(.severity == "MEDIUM") |.message' -r)
+              
+            if [ -n "$critical_vulns" ]; then
+              echo "Critical vulnerabilities found:"
+              echo "$critical_vulns"
+              exit 1
+            elif [ -n "$high_vulns" ]; then
+              echo "High vulnerabilities found:"
+              echo "$high_vulns"
+              exit 1
+            elif [ -n "$medium_vulns" ]; then
+              echo "Medium vulnerabilities found:"
+              echo "$medium_vulns"
+              exit 1
+            fi
           else
             echo "No vulnerabilities found"
           fi
-
-      - name: Finish Job
-        run: echo "Termino del Job "
 
   CSA:
     needs: SAST

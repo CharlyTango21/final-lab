@@ -58,13 +58,12 @@ jobs:
             -Dsonar.language=js \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.exclusions=**/node_modules/** \
-            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx \
+            -Dsonar.inclusions=**/*.js,**/*.jsx,**/*.ts,**/*.tsx 
           if [ $? -ne 0 ]
           then
             echo "Error al ejecutar SonarCloud"
             exit 1
           fi
-
 
       - name: Validate Vulnerabilities
         if: steps.SonarCloudAnalysis.outcome == 'success'
